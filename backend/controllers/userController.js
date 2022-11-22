@@ -3,54 +3,54 @@ const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+// Generate Token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "1d",
-  });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 };
 
-//regiater User
+// Register User
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
+
+  // Validation
   if (!name || !email || !password) {
     res.status(400);
-    throw new Error("Please fill all fields");
+    throw new Error("Please fill in all required fields");
   }
-
-  if (password.lenght < 6) {
+  if (password.length < 6) {
     res.status(400);
-    throw new Error("Password must be at least 6 characters long");
+    throw new Error("Password must be up to 6 characters");
   }
 
-  //check if user already exists
+  // Check if user email already exists
   const userExists = await User.findOne({ email });
+
   if (userExists) {
     res.status(400);
-    throw new Error("User already exists");
+    throw new Error("Email has already been registered");
   }
 
-  //create new user
+  // Create new user
   const user = await User.create({
     name,
     email,
     password,
   });
 
-  //generate token
+  //   Generate Token
   const token = generateToken(user._id);
 
-  //send http-only cookie
+  // Send HTTP-only cookie
   res.cookie("token", token, {
     path: "/",
     httpOnly: true,
-    expires: new Date(Date.now() + 1000 * 86400), //1day
+    expires: new Date(Date.now() + 1000 * 86400), // 1 day
     sameSite: "none",
-    secure: true,
+    secure: false,
   });
 
   if (user) {
     const { _id, name, email, photo, phone, bio } = user;
-
     res.status(201).json({
       _id,
       name,
@@ -66,41 +66,41 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-//login user
+// Login User
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  //validate request
+  // Validate Request
   if (!email || !password) {
     res.status(400);
-    throw new Error("Please fill all fields");
+    throw new Error("Please add email and password");
   }
 
-  //check if user exists
+  // Check if user exists
   const user = await User.findOne({ email });
+
   if (!user) {
     res.status(400);
-    throw new Error("User Not found with this email , Please sign up");
+    throw new Error("User not found, please signup");
   }
 
-  //check if password is correct
+  // User exists, check if password is correct
   const passwordIsCorrect = await bcrypt.compare(password, user.password);
 
-  //generate token
+  //   Generate Token
   const token = generateToken(user._id);
 
-  //send http-only cookie
+  // Send HTTP-only cookie
   res.cookie("token", token, {
     path: "/",
     httpOnly: true,
-    expires: new Date(Date.now() + 1000 * 86400), //1day
+    expires: new Date(Date.now() + 1000 * 86400), // 1 day
     sameSite: "none",
-    secure: true,
+    secure: false,
   });
 
   if (user && passwordIsCorrect) {
     const { _id, name, email, photo, phone, bio } = user;
-
     res.status(200).json({
       _id,
       name,
@@ -116,18 +116,41 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-const logoutUser = asyncHandler(async (req, res) => {
+// Logout User
+const logout = asyncHandler(async (req, res) => {
   res.cookie("token", "", {
     path: "/",
     httpOnly: true,
     expires: new Date(0),
     sameSite: "none",
-    secure: true,
+    secure: false,
   });
-
-  return res.status(200).json({
-    message: "Successfully logged out",
-  });
+  return res.status(200).json({ message: "Successfully Logged Out" });
 });
 
-module.exports = { registerUser, loginUser, logoutUser };
+// Get User Data
+const getUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    const { _id, name, email, photo, phone, bio } = user;
+    res.status(200).json({
+      _id,
+      name,
+      email,
+      photo,
+      phone,
+      bio,
+    });
+  } else {
+    res.status(400);
+    throw new Error("User Not Found");
+  }
+});
+
+module.exports = {
+  registerUser,
+  loginUser,
+  logout,
+  getUser,
+};

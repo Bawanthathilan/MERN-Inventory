@@ -1,44 +1,38 @@
-const dotemv = require("dotenv").config();
+const dotenv = require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const UserRoute = require("./routes/userRoute");
-const errorHandler = require("./middleware/errorMiddleware");
-const cookesParser = require("cookie-parser");
+const userRoute = require("./routes/userRoute");
+const errorHandler = require("./middleWare/errorMiddleware");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
 // Middlewares
 app.use(express.json());
-app.use(cookesParser());
-app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 
-//Routes Middlewares
-app.use("/api/users", UserRoute);
+// Routes Middleware
+app.use("/api/users", userRoute);
 
-//routes
+// Routes
 app.get("/", (req, res) => {
   res.send("Home Page");
 });
 
 // Error Middleware
 app.use(errorHandler);
-
+// Connect to DB and start server
 const PORT = process.env.PORT || 5000;
-
-//connect to database
 mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`Server running on port: ${PORT}`);
+      console.log(`Server Running on port ${PORT}`);
     });
   })
-  .catch((error) => {
-    console.log(error.message);
-  });
+  .catch((err) => console.log(err));
