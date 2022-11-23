@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { param } = require("../routes/userRoute");
 
 // Generate Token
 const generateToken = (id) => {
@@ -190,6 +191,36 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
+//update password
+const changepassword = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const { oldPassword, password } = req.body;
+
+  if (!user) {
+    res.status(400);
+    throw new Error("User Not Found,  Please signup");
+  }
+
+  //validate password
+  if (!oldPassword || !password) {
+    res.status(400);
+    throw new Error("Please fill an old and new password");
+  }
+
+  //check if password is correct
+  const passwordIsCorrect = await bcrypt.compare(oldPassword, user.password);
+
+  //save new password
+  if (user && passwordIsCorrect) {
+    user.password = password;
+    await user.save();
+    res.status(200).json({ message: "Password Updated" });
+  } else {
+    res.status(400);
+    throw new Error("Invalid old password");
+  }
+});
+
 module.exports = {
   registerUser,
   loginUser,
@@ -197,4 +228,5 @@ module.exports = {
   getUser,
   logginStatus,
   updateUser,
+  changepassword,
 };
