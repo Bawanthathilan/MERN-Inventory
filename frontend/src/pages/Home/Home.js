@@ -1,5 +1,5 @@
 import React from "react";
-import "./home.scss";
+import "./home.style.scss";
 import Container from "../../components/Container/Container";
 import { BsFillArrowRightCircleFill } from "react-icons/bs";
 import ProductImage from "../../assets/images/productImage.png";
@@ -17,7 +17,7 @@ const Home = () => {
             <a className="login" href="/login">
               Login
             </a>
-            <a className="dashboard" href="/Dashboard">
+            <a className="dashboard" href="/dashboard">
               Dashboard
             </a>
           </div>

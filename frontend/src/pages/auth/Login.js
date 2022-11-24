@@ -1,11 +1,11 @@
 import React from "react";
-import "./login.scss";
+import "./login.style.scss";
 
 const Login = () => {
   return (
     <div className="login_container">
       <div className="form">
-        <div className="form__header">LOGO</div>
+        <div className="form__header">LOGIN</div>
         <div className="form__body">
           <form>
             <input type="email" placeholder="Email" className="form__input" />
@@ -19,9 +19,11 @@ const Login = () => {
             </button>
           </form>
 
-          <a href="/">Home</a>
-          <a href="/forgot">Forgot Password</a>
-          <a href="/register">Register</a>
+          <div className="form__footer">
+            <a href="/">Home</a>
+            <a href="/forgot">Forgot Password</a>
+            <a href="/register">Register</a>
+          </div>
         </div>
       </div>
     </div>
