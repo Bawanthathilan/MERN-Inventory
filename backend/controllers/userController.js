@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Token = require("../models/tokenModel");
 var crypto = require("crypto");
+const sendEmail = require("../utils/sendEmail");
 
 // Generate Token
 const generateToken = (id) => {
@@ -233,9 +234,54 @@ const forgotPassword = asyncHandler(async (req, res) => {
     throw new Error("User Not Found,  Please signup");
   }
 
+  //delete token if exists
+  let token = await Token.findOne({ userId: user._id });
+  if (token) {
+    await Token.deleteOne();
+  }
+
   //generate token
   let resetToken = crypto.randomBytes(32).toString("hex") + user._id;
-  console.log(resetToken);
+
+  //hash token before saving to database
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  //save token to database
+  await new Token({
+    userId: user._id,
+    token: hashedToken,
+    createdAt: Date.now(),
+    expiresAt: Date.now() + 40 * (60 * 1000), //30 min
+  }).save();
+
+  //construct reset url
+  const resetUrl = `${process.env.FRONTEND_URL}+/resetpassword/${resetToken}`;
+
+  //reset email
+  const message = `
+  <h2>Hello ${user.name}</h2>
+  <p>PLease use the url below to reset your password</p>
+  <p>This reset link is valid for only 40 min</p>
+  <a href=${resetUrl} clicktracking=off>${resetUrl}</a>
+
+  <p>regurds</p>
+  `;
+
+  const subject = "Password Reset Request";
+  const send_to = user.email;
+  const sent_from = process.env.EMAIL_USER;
+
+  try {
+    await sendEmail(subject, message, send_to, sent_from);
+    res.status(200).json({ success: true, message: "Reset Email Sent" });
+  } catch (error) {
+    res.status(500);
+    throw new Error("Email not sent, please try again");
+  }
+
   res.send("forgot password");
 });
 
