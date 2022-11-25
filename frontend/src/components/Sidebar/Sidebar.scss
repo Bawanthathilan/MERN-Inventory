@@ -13,7 +13,10 @@ main {
   width: 230px;
   height: 100vh;
   flex-shrink: 0;
-  background-color: #101989;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(17, 25, 40, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.125);
   overflow: auto;
   color: rgb(255, 255, 255);
   transition: all 0.5s;
@@ -76,7 +79,7 @@ main {
   align-items: flex-start;
   gap: 12px;
   transition: all 0.5s;
-  font-size: 1.6rem;
+  font-size: 1rem;
 }
 
 .sidebar-title span .icon {
