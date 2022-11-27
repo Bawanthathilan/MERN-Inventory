@@ -1,0 +1,23 @@
+.header {
+  background-color: rgb(233, 233, 233);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 3rem;
+
+  .name {
+    color: black;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 1rem;
+  }
+
+  .logout_btn {
+    padding: 10px;
+    color: black;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-right: 1rem;
+    background-color: orange;
+  }
+}
