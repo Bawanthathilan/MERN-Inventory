@@ -29,3 +29,41 @@ export const registerUser = async (userData) => {
     toast.error(message);
   }
 };
+
+//login user
+export const loginUser = async (userData) => {
+  try {
+    const response = await axios.post(
+      `${BACKEND_URL}/api/users/login`,
+      userData
+    );
+    if (response.statusText === "OK") {
+      toast.success("User login successfully");
+    }
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+//logout Uset
+
+export const logoutUser = async () => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/api/users/logout`);
+    if (response.statusText === "OK") {
+      toast.success("User logout successfully");
+    }
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};

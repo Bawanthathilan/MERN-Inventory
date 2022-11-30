@@ -29,7 +29,6 @@ const Register = () => {
 
   const register = async (e) => {
     e.preventDefault();
-    console.log(name, email, password, password2);
 
     if (!name || !email || !password || !password2) {
       return toast.error("Please fill all fields");
