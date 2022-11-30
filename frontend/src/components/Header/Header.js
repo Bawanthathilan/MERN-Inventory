@@ -1,24 +1,25 @@
 import React from "react";
 import "./header.style.scss";
 import { logoutUser } from "../../services/authService";
-import { useDispatch } from "react-redux";
-import { SET_NAME } from "../../redux/features/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { SET_LOGIN, selectName } from "../../redux/features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const name = useSelector(selectName);
 
   const logout = async () => {
     await logoutUser();
-    await dispatch(SET_NAME(false));
+    await dispatch(SET_LOGIN(false));
     navigate("/login");
   };
 
   return (
     <div className="header">
       <div className="name">
-        <h1> Welcome , My Name</h1>
+        <h1> Welcome , {name}</h1>
       </div>
 
       <div className="logout_btn" onClick={logout}>
