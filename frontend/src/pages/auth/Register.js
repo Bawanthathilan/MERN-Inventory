@@ -5,6 +5,7 @@ import { validateEmail, registerUser } from "../../services/authService";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { SET_NAME, SET_LOGIN } from "../../redux/features/auth/authSlice";
+import Loader from "../../components/Loader/Loader";
 
 const initialState = {
   name: "",
@@ -69,6 +70,7 @@ const Register = () => {
 
   return (
     <div className="register_container">
+      {isLoading && <Loader />}
       <div className="form">
         <div className="form__header">REGISTER</div>
         <div className="form__body">
