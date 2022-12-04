@@ -60,4 +60,19 @@ const getProducts = asyncHandler(async (req, res) => {
   res.status(200).json(products);
 });
 
-module.exports = { createProduct, getProducts };
+//get single product
+const getProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+
+  if (product.user.toString() !== req.user.id) {
+    res.status(401);
+    throw new Error("Unauthorized");
+  }
+  res.status(200).send(product);
+});
+
+module.exports = { createProduct, getProducts, getProduct };
