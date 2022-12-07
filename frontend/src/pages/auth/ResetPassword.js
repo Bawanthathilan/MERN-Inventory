@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./resetPassword.style.scss";
 import { resetPasswors } from "../../services/authService";
 import { toast } from "react-toastify";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const initialState = {
   password1: "",
@@ -12,7 +12,7 @@ const initialState = {
 const ResetPassword = () => {
   const [formData, setFormData] = useState(initialState);
   const { password, password2 } = formData;
-
+  const navigate = useNavigate();
   const { resetToken } = useParams();
 
   const handleInputCHange = (e) => {
@@ -39,6 +39,7 @@ const ResetPassword = () => {
     try {
       const data = await resetPasswors(userData, resetToken);
       toast.success(data.message);
+      navigate("/login");
     } catch (e) {
       console.log(e.message);
     }

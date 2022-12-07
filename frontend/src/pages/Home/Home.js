@@ -3,6 +3,10 @@ import "./home.style.scss";
 import Container from "../../components/Container/Container";
 import { BsFillArrowRightCircleFill } from "react-icons/bs";
 import ProductImage from "../../assets/images/productImage.png";
+import {
+  ShowOnLogin,
+  ShowOnLogout,
+} from "../../components/protect/HiddenLinks";
 
 const Home = () => {
   return (
@@ -11,15 +15,21 @@ const Home = () => {
         <div className="nav_section">
           <div className="nav_section_left">INM</div>
           <div className="nav_section_right">
-            <a className="register" href="/register">
-              Register
-            </a>
-            <a className="login" href="/login">
-              Login
-            </a>
-            <a className="dashboard" href="/dashboard">
-              Dashboard
-            </a>
+            <ShowOnLogout>
+              <a className="register" href="/register">
+                Register
+              </a>
+
+              <a className="login" href="/login">
+                Login
+              </a>
+            </ShowOnLogout>
+
+            <ShowOnLogin>
+              <a className="dashboard" href="/dashboard">
+                Dashboard
+              </a>
+            </ShowOnLogin>
           </div>
         </div>
         <div className="home_content">
