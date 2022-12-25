@@ -75,4 +75,21 @@ const getProduct = asyncHandler(async (req, res) => {
   res.status(200).send(product);
 });
 
-module.exports = { createProduct, getProducts, getProduct };
+// delete product
+const deleteProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+
+  if (product.user.toString() !== req.user.id) {
+    res.status(401);
+    throw new Error("Unauthorized");
+  }
+
+  const deleteProduct = await product.remove();
+  res.status(200).json(deleteProduct);
+});
+
+module.exports = { createProduct, getProducts, getProduct, deleteProduct };
